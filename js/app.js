@@ -1,6 +1,6 @@
 function sendPost(){
 axios.request({
-    url: "https://jsonplaceholder.typicode.com/posts",
+    url: "https://jsonplaceholder.typicode.com/posts/1/comments",
     method: `POST`,
     data: {
         title: document.getElementById(`postTitle`).value,
@@ -25,7 +25,7 @@ function postFailure(error){
 
 function updatePost(){
 axios.request({
-    url: "https://jsonplaceholder.typicode.com/posts/1",
+    url: "https://jsonplaceholder.typicode.com/posts/1/comments",
     method: `PATCH`,
     data: {
         title: document.getElementById(`postTitle`).value,
@@ -74,13 +74,55 @@ window.onload = function getPost(){
 axios.request({
     url: "https://jsonplaceholder.typicode.com/posts",
     method: `GET`,
+// },
+// function addComments(){
+// axios.request({
+//     url: "https://jsonplaceholder.typicode.com/posts/1/comments",
+//     method: `PUT`,
+//     data: {
+//         comments: [{
+//             name: '...',
+//             email: '...',
+//             body: '...',
+//         },
+//     ]}
+// }).then(commentSuccess).catch(commentFailure);
+// }
 }).then(getSuccess).catch(getFailure);
 }
 
 function getSuccess(response){
     let posts = response.data;
     for (let post of posts)
-    document.getElementById(`getPosts`).insertAdjacentHTML(`beforeend`, `<p>Review Title:${post.title} <br> Review:${post.body} </p>`);
+    document.getElementById(`getPosts`).insertAdjacentHTML(`beforeend`, `<p>Review Title:${post.title} <br> Review:${post.body} <br> User:${post.userId} <br> Comments:${post.comments}</p>`);
+}
+
+function addComments(){
+axios.request({
+    url: "https://jsonplaceholder.typicode.com/posts/1/comments",
+    method: `GET`,
+    data: {
+        comments: [{
+            // postID: '...',
+            // id: '...',
+            // name: '...',
+            // email: '...',
+            // body: '...',
+        },
+    ]}
+}).then(commentSuccess).catch(commentFailure);
+}
+
+function commentSuccess(response) {
+    let extra = response.data;
+    console.log(response);
+    for (let comment of extra){
+        document.getElementById(`getPosts`).insertAdjacentHTML(`beforeend`, `<h5>Comments: <br>Post ID: ${comment[`postId`]} <br> Name: ${comment[`name`]} <br>${comment[`body`]}</h5>`);
+    }
+}
+
+function commentFailure(error){
+    console.log(error);
 }
 
 function getFailure(error){
@@ -102,5 +144,6 @@ document.getElementById(`submit`).addEventListener(`click`, sendPost);
 document.getElementById(`updatePost`).addEventListener(`click`, updatePost);
 document.getElementById(`clearPost`).addEventListener(`click`, clearPost);
 document.getElementById(`deleteAll`).addEventListener(`click`, deletePost);
-// document.getElementById(`getPosts`).addEventListener(`load`, getPost);
-// window.onload = getPost();
+document.getElementById(`comments`).addEventListener(`click`, addComments);
+// window.onload = addComments();
+
